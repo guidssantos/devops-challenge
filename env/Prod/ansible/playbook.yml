@@ -1,0 +1,72 @@
+- hosts: server
+  become: true
+  tasks:
+    - name: Update cache and install packages
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      with_items:
+        - nginx
+        - fail2ban
+        - awscli
+      tags: [nginx, security]
+    
+  #   - name: Copy static HTML file
+  #     copy:
+  #       src: ./nginx/index.html
+  #       dest: /var/www/html/
+  #     tags: [nginx]
+
+  #   - name: Configure fail2ban
+  #     template: 
+  #       src: fail2ban.conf.j2
+  #       dest: /etc/fail2ban/fail2ban.conf
+  #     notify: Restart fail2ban
+  #     tags: [security]
+
+  #   - name: Install Prometheus
+  #     ansible.builtin.shell:
+  #       cmd: |
+  #         wget https://github.com/prometheus/prometheus/releases/download/v2.30.0/prometheus-2.30.0.linux-amd64.tar.gz
+  #         tar xvfz prometheus-2.30.0.linux-amd64.tar.gz
+  #         sudo mv prometheus-2.30.0.linux-amd64 /opt/prometheus
+  #     tags: [prometheus]
+
+  #   - name: Configure Prometheus
+  #     template:
+  #       src: prometheus.yml.j2
+  #       dest: /opt/prometheus/prometheus.yml
+  #     notify: Restart Prometheus
+  #     tags: [prometheus]
+
+  #   - name: Install Grafana
+  #     apt:
+  #       deb: https://packages.grafana.com/oss/deb stable main
+  #       update_cache: yes
+        
+  #     tags: [grafana]
+      
+  #   - name: Start Grafana Service
+  #     ansible.builtin.service:
+  #       name: grafana-server
+  #       state: started
+  #       enabled: true
+  #     tags: [grafana]
+
+    
+  # handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Restart fail2ban
+      service:
+        name: fail2ban
+        state: restarted
+
+    - name: Restart Prometheus
+      service:
+        name: prometheus
+        state: restarted  
