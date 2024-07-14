@@ -1,61 +1,78 @@
 - hosts: server
+  remote_user: ubuntu
   become: true
   tasks:
     - name: Update cache and install packages
       apt:
-        name: "{{ item }}"
+        name:
+          - nginx
+          - fail2ban
         update_cache: yes
         state: present
-      with_items:
-        - nginx
-        - fail2ban
-        - awscli
       tags: [nginx, security]
     
-  #   - name: Copy static HTML file
-  #     copy:
-  #       src: ./nginx/index.html
-  #       dest: /var/www/html/
-  #     tags: [nginx]
+    - name: Copy static HTML file
+      copy:
+        src: ./nginx/index.html
+        dest: /var/www/html/
+      tags: [nginx]
 
-  #   - name: Configure fail2ban
-  #     template: 
-  #       src: fail2ban.conf.j2
-  #       dest: /etc/fail2ban/fail2ban.conf
-  #     notify: Restart fail2ban
-  #     tags: [security]
+    - name: Configure fail2ban
+      copy:
+        content: |
+          [DEFAULT]
+          ignoreip = 127.0.0.1/8
+          bantime  = 600
+          findtime  = 600
+          maxretry = 5
 
-  #   - name: Install Prometheus
-  #     ansible.builtin.shell:
-  #       cmd: |
-  #         wget https://github.com/prometheus/prometheus/releases/download/v2.30.0/prometheus-2.30.0.linux-amd64.tar.gz
-  #         tar xvfz prometheus-2.30.0.linux-amd64.tar.gz
-  #         sudo mv prometheus-2.30.0.linux-amd64 /opt/prometheus
-  #     tags: [prometheus]
+          [sshd]
+          enabled = true
+        dest: /etc/fail2ban/fail2ban.conf
+      notify: Restart fail2ban
+      tags: [security]
 
-  #   - name: Configure Prometheus
-  #     template:
-  #       src: prometheus.yml.j2
-  #       dest: /opt/prometheus/prometheus.yml
-  #     notify: Restart Prometheus
-  #     tags: [prometheus]
+    - name: Install Prometheus
+      ansible.builtin.shell:
+        cmd: |
+          wget https://github.com/prometheus/prometheus/releases/download/v2.30.0/prometheus-2.30.0.linux-amd64.tar.gz
+          tar xvfz prometheus-2.30.0.linux-amd64.tar.gz
+          sudo mv prometheus-2.30.0.linux-amd64 /opt/prometheus
+      tags: [prometheus]
 
-  #   - name: Install Grafana
-  #     apt:
-  #       deb: https://packages.grafana.com/oss/deb stable main
-  #       update_cache: yes
-        
-  #     tags: [grafana]
-      
-  #   - name: Start Grafana Service
-  #     ansible.builtin.service:
-  #       name: grafana-server
-  #       state: started
-  #       enabled: true
-  #     tags: [grafana]
+    - name: Configure Prometheus
+      apt:
+        name: prometheus
+        update_cache: yes
+      notify: Restart Prometheus
+      tags: [prometheus]
+
+    - name: Add Grafana APT key
+      apt_key:
+        url: https://packages.grafana.com/gpg.key
+        state: present
+
+    - name: Add Grafana repository
+      apt_repository:
+        repo: 'deb https://packages.grafana.com/oss/deb stable main'
+        state: present
+
+    - name: Install Grafana
+      apt:
+        name: grafana
+        update_cache: yes
+
+      tags: [grafana]
+
+    - name: Start Grafana Service
+      ansible.builtin.service:
+        name: grafana-server
+        state: started
+        enabled: true
+      tags: [grafana]
 
     
-  # handlers:
+  handlers:
     - name: Restart nginx
       service:
         name: nginx
