@@ -48,4 +48,4 @@ jobs:
         playbook: playbook.yml
         directory: ansible
         key: ${{secrets.SSH_PRIVATE_KEY}}
-        inventory: ansible/hosts.ini
+        inventory: hosts.ini
