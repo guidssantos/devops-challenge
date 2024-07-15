@@ -31,7 +31,7 @@ jobs:
         TF_VAR_s3_key: ${{ secrets.S3_KEY }}
         TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
         TF_VAR_dynamodb_table: ${{ secrets.DYNAMODB_TABLE }}
-      run: terraform init
+      run: terraform init -backend-config="bucket=${{ secrets.S3_BUCKET }}" -backend-config="key=${{ secrets.S3_KEY }}" -backend-config="region=${{ secrets.AWS_REGION }}" -backend-config="dynamodb_table=${{ secrets.DYNAMODB_TABLE }}"
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
