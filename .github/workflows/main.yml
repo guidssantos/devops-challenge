@@ -42,15 +42,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup Ansible
-      run: sudo apt-get update && sudo apt-get install -y ansible
-
-    - name: Add SSH key
-      uses: webfactory/ssh-agent@v0.5.3
+    - name: Run playbook
+      uses: dawidd6/action-ansible-playbook@v2
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: Run Ansible Playbook
-      env:
-        ANSIBLE_HOST_KEY_CHECKING: 'false'
-      run: ansible-playbook -i ansible/hosts.ini ansible/playbook.yml
+        playbook: playbook.yml
+        directory: ansible
+        key: ${{secrets.SSH_PRIVATE_KEY}}
+        inventory: ansible/hosts.ini
