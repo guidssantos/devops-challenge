@@ -30,3 +30,7 @@ crash.log
 # .tfenv directories
 .terraform-version
 .terraform.lock.hcl
+
+backend.tf
+
+*.pem
