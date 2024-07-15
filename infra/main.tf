@@ -1,6 +1,10 @@
 terraform {
   required_providers {
     aws = {source = "hashicorp/aws", version = "5.17.0"}
+    http = {
+      source = "hashicorp/http"
+      version = "2.1.0"
+    }
   }
 }
 
@@ -79,6 +83,7 @@ resource "aws_instance" "instance" {
   vpc_security_group_ids = [aws_security_group.sg.id]
   subnet_id = aws_subnet.public[0].id
 }
+
 
 output "instance_ip" {
   value = aws_instance.instance.public_ip

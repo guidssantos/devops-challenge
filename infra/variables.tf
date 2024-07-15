@@ -13,9 +13,9 @@ variable "ami_id" {
     # default = ""  
 }
 
-variable "my_ip" {   
-    type = string
-}
+# variable "my_ip" {   
+#     type = string
+# }
 
 variable "key_name" {   
     type = string

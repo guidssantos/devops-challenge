@@ -1,3 +1,7 @@
+data "http" "my_ip" {
+  url = "https://ifconfig.me/ip"
+}
+
 resource "aws_security_group" "sg" {
   name = var.securityGroup
   vpc_id = aws_vpc.main.id
@@ -14,6 +18,12 @@ resource "aws_security_group" "sg" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  ingress {
+    from_port = 9093
+    to_port = 9093
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     from_port = 3000
@@ -27,7 +37,7 @@ resource "aws_security_group" "sg" {
     to_port = 22
     protocol = "tcp"
     
-    cidr_blocks = [var.my_ip]
+    cidr_blocks = ["${trimspace(data.http.my_ip.body)}/32"]
   }
 
   egress {
