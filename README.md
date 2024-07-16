@@ -2,7 +2,8 @@
 
 Uma infraestrutura básica na AWS configurada com Terraform para provisionamento e Ansible para configuração.
 
-
+## Video explicando sobre o projeto
+https://youtu.be/yseeJpwwPl8
 
 ## Tecnologias Utilizadas
 - Linguagem: HCL (HashiCorp Configuration Language) para Terraform, YAML para Ansible
