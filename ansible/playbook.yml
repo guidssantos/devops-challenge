@@ -32,14 +32,6 @@
       notify: Restart fail2ban
       tags: [security]
 
-    - name: Install Prometheus
-      ansible.builtin.shell:
-        cmd: |
-          wget https://github.com/prometheus/prometheus/releases/download/v2.30.0/prometheus-2.30.0.linux-amd64.tar.gz
-          tar xvfz prometheus-2.30.0.linux-amd64.tar.gz
-          sudo mv prometheus-2.30.0.linux-amd64 /opt/prometheus
-      tags: [prometheus]
-
     - name: Configure Prometheus
       apt:
         name: prometheus
