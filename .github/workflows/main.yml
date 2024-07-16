@@ -34,9 +34,6 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
-    - name: Checkout code
-      uses: actions/checkout@v2
-
     - name: Make generate_inventory.sh executable
       run: chmod +x generate_inventory.sh
 
