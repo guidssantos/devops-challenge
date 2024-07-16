@@ -76,7 +76,7 @@ terraform apply
 - Após a instancia ser criada, execute o playbook do Ansible:
 
 ```bash
-ansible-playbook -i inventory.ini ansible/playbook.yml
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
 ```
 
 - Agora, você pode acessar as seguintes urls:
