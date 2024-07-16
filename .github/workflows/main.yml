@@ -51,4 +51,4 @@ jobs:
         key: ${{secrets.SSH_PRIVATE_KEY}}
         inventory: |
           [server]
-            $INSTANCE_IP
+          ${{steps.terraform_output.outputs.INSTANCE_IP}}
