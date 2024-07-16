@@ -32,7 +32,9 @@ jobs:
       run: terraform validate -no-color
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve
+      run: |
+        terraform apply -auto-approve
+        echo "::set-output name=instance_ip::$(terraform output -raw IP)"
 
     - name: Make generate_inventory.sh executable
       run: chmod +x generate_inventory.sh
@@ -40,5 +42,9 @@ jobs:
     - name: Generate inventory
       run: ./generate_inventory.sh
 
+    - name: Verify inventory file
+      run: cat ansible/inventory.ini
+
     - name: Run Playbook
-      run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
+      run: |
+        ansible-playbook -i ansible/inventory.ini ansible/playbook.yml

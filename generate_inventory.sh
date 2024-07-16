@@ -4,5 +4,5 @@ instance_ip=$(terraform output -raw IP)
 
 cat <<EOL > ansible/inventory.ini
 [server]
-$instance_ip
+ec2-instance ansible_host=$instance_ip ansible_user=ubuntu ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 EOL
