@@ -38,9 +38,7 @@ jobs:
       run: chmod +x generate_inventory.sh
 
     - name: Generate inventory
-      run: |
-        ./generate_inventory.sh
-        cat ansible/inventory.ini
+      run: ./generate_inventory.sh
 
     - name: Run Playbook
       run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
