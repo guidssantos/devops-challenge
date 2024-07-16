@@ -8,7 +8,6 @@ terraform {
   }
 }
 
-
 module "aws-prod" {
   source = "./infra"
   instance_type = "t2.micro"
@@ -16,5 +15,8 @@ module "aws-prod" {
   key_name = "devops-challange"
   securityGroup = "aws-prod-sg"
   name = "aws-prod"
-  production = true 
+}
+
+output "IP" {
+  value = module.aws-prod.instance_public_ip
 }

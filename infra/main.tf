@@ -13,16 +13,19 @@ provider "aws" {
   region = var.aws_region
 }
 
+
+output "instance_public_ip" {
+  description = "Public IP address of the EC2 instance"
+  value       = "${aws_instance.instance.public_ip}"
+}
+
+
 # --- VPC ---
 
 data "aws_availability_zones" "available" {
   state = "available"
 }
 
-locals {
-    azs_count = 3
-    azs_names = data.aws_availability_zones.available.names
-}
 
 resource "aws_vpc" "main" {
   cidr_block = "10.10.0.0/16"
@@ -32,25 +35,29 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "public" {
-  count = local.azs_count
-  vpc_id = aws_vpc.main.id
-  availability_zone = local.azs_names[count.index]
-  cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 8, 10 + count.index)  
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.10.1.0/24"
   map_public_ip_on_launch = true
-  tags = {Name = "${var.name}-public-${local.azs_names[count.index]}"}
+  availability_zone = data.aws_availability_zones.available.names[0]
+  tags = {
+    Name = "${var.name}-public-subnet"
+  }
 }
 
 # --- Internet Gateway ---
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
-  tags = {Name = "${var.name}-igw"}
+  tags = {
+    Name = "${var.name}-igw"
+  }
 }
 
 resource "aws_eip" "main" {
-  count = local.azs_count
-  depends_on = [ aws_internet_gateway.main ]
-  tags = {Name = "${var.name}-eip-${local.azs_names[count.index]}"}
+  domain = "vpc"
+  tags = {
+    Name = "${var.name}-eip"
+  }
 }
 
 #  --- Public Route Table ---
@@ -66,8 +73,7 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  count = local.azs_count
-  subnet_id = aws_subnet.public[count.index].id
+  subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
 
@@ -81,10 +87,7 @@ resource "aws_instance" "instance" {
     Name = "${var.name}-instance"
   }
   vpc_security_group_ids = [aws_security_group.sg.id]
-  subnet_id = aws_subnet.public[0].id
+  subnet_id = aws_subnet.public.id
 }
 
 
-output "instance_ip" {
-  value = aws_instance.instance.public_ip
-}

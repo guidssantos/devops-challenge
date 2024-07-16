@@ -42,12 +42,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Generate inventory
+      run: ./generate_inventory.sh
+
     - name: Run playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
         playbook: playbook.yml
         directory: ansible
         key: ${{secrets.SSH_PRIVATE_KEY}}
-        inventory: |
-          [server]
-          54.158.24.238 
+        inventory: inventory.ini
