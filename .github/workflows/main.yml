@@ -37,7 +37,7 @@ jobs:
 
     - name: Get IP from Terraform
       id: terraform_output
-      run: echo "INSTANCE_IP=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
+      run: echo "INSTANCE_IP=$(terraform output -raw IP)" >> $GITHUB_ENV
 
     - name: Run playbook
       uses: dawidd6/action-ansible-playbook@v2
