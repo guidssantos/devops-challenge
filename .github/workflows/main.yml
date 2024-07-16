@@ -34,17 +34,15 @@ jobs:
     - name: Terraform Apply
       run: |
         terraform apply -auto-approve
-        echo "::set-output name=instance_ip::$(terraform output -raw IP)"
+        echo "INSTANCE_IP=$(terraform output -raw IP)" >> $GITHUB_ENV
 
-    - name: Make generate_inventory.sh executable
-      run: chmod +x generate_inventory.sh
-
-    - name: Generate inventory
-      run: ./generate_inventory.sh
-
-    - name: Verify inventory file
-      run: cat ansible/inventory.ini
-
-    - name: Run Playbook
-      run: |
-        ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
+    - name: Run playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: playbook.yml
+        directory: ansible
+        key: ${{secrets.SSH_PRIVATE_KEY}}
+        inventory: |
+          [server]
+          ec2-instance ansible_host=${{ env.INSTANCE_IP }} ansible_user=ubuntu ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+        
