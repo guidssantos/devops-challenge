@@ -37,7 +37,10 @@ jobs:
 
     - name: Get IP from Terraform
       id: terraform_output
-      run: echo "INSTANCE_IP=$(terraform output -raw IP)" >> $GITHUB_ENV
+      run: echo "INSTANCE_IP="$(terraform output -raw IP)"" >> $GITHUB_ENV
+
+    - name: Display captured IP
+      run: 'echo "$INSTANCE_IP"'
 
     - name: Run playbook
       uses: dawidd6/action-ansible-playbook@v2
@@ -47,4 +50,4 @@ jobs:
         key: ${{secrets.SSH_PRIVATE_KEY}}
         inventory: |
           [server]
-            ${{ env.INSTANCE_IP }}
+            $(terraform output -raw IP)
