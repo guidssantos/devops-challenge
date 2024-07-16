@@ -34,7 +34,11 @@ jobs:
     - name: Terraform Apply
       run: |
         terraform apply -auto-approve
-        echo "::set-output name=INSTANCE_IP::$(terraform output -raw IP)"
+
+    - name: Get IP from Terraform
+      id: terraform_output
+      run: |
+        echo "::set-output name=instance_ip::$(terraform output -raw instance_public_ip)"
 
     - name: Run playbook
       uses: dawidd6/action-ansible-playbook@v2
@@ -44,5 +48,4 @@ jobs:
         key: ${{secrets.SSH_PRIVATE_KEY}}
         inventory: |
           [server]
-          ec2-instance ansible_host=${{ steps.terraform_apply.outputs.INSTANCE_IP }} ansible_user=ubuntu ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-        
+          {{ steps.terraform_output.outputs.instance_ip }}
