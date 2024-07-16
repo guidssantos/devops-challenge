@@ -37,7 +37,6 @@ jobs:
 
     - name: Get IP from Terraform
       id: terraform_output
-      run: |
       run: echo "INSTANCE_IP=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
 
     - name: Run playbook
@@ -48,4 +47,4 @@ jobs:
         key: ${{secrets.SSH_PRIVATE_KEY}}
         inventory: |
           [server]
-          ${{ env.INSTANCE_IP }}
+            ${{ env.INSTANCE_IP }}
