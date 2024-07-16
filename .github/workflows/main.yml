@@ -50,4 +50,4 @@ jobs:
         directory: ansible
         key: ${{secrets.SSH_PRIVATE_KEY}}
         options: |
-          --inventory inventory.ini
+          -i inventory.ini
