@@ -17,6 +17,7 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.9.2
+        terraform_wrapper: false
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -37,7 +38,7 @@ jobs:
 
     - name: Get IP from Terraform
       id: terraform_output
-      run: echo "INSTANCE_IP="$(terraform output -raw IP)"" >> $GITHUB_ENV
+      run: echo "INSTANCE_IP="$(terraform output -raw IP)"" >> $GITHUB_OUTPUT
 
     - name: Display captured IP
       run: 'echo "$INSTANCE_IP"'
@@ -50,4 +51,4 @@ jobs:
         key: ${{secrets.SSH_PRIVATE_KEY}}
         inventory: |
           [server]
-            $(terraform output -raw IP)
+            $INSTANCE_IP
