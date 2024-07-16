@@ -43,11 +43,5 @@ jobs:
     - name: Generate inventory
       run: ./generate_inventory.sh
 
-    - name: Run playbook
-      uses: dawidd6/action-ansible-playbook@v2
-      with:
-        playbook: playbook.yml
-        directory: ansible
-        key: ${{secrets.SSH_PRIVATE_KEY}}
-        options: |
-          -i inventory.ini
+    - name: Run Playbook
+      run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
